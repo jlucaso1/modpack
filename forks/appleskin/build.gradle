@@ -1,0 +1,127 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+	id "com.gradleup.shadow" version "9.2.2"
+}
+
+base {
+	archivesName = project.archives_base_name
+}
+
+group = project.maven_group
+version = "mc" + project.minecraft_version + "-" + project.mod_version
+def semver_version = project.mod_version + "+mc" + project.minecraft_version
+
+sourceSets.main.java.srcDirs += 'java'
+sourceSets.main.resources.srcDirs += 'resources'
+
+sourceSets.main.java {
+    exclude 'squeek/appleskin/gui/ModMenuIntegration.java'
+    exclude 'squeek/appleskin/gui/ConfiguredConfigProvider.java'
+    exclude 'squeek/appleskin/gui/AutoConfigIntegration.java'
+    exclude 'squeek/appleskin/client/REITooltipPlugin.java'
+    exclude 'squeek/appleskin/mixin/JEIRenderHelperMixin.java'
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    implementation (shadow "blue.endless:jankson:1.2.3")
+}
+
+processResources {
+	inputs.property "version", semver_version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": semver_version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release = 25
+}
+
+java {
+	withSourcesJar()
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+tasks.register('apiJar', Jar) {
+    dependsOn classes
+    archiveClassifier.set "api"
+
+    from sourceSets.main.output
+    include "squeek/appleskin/api/**"
+}
+
+// shadowJar is the main jar now since there's no remapping needed anymore.
+jar.enabled = false
+
+import net.fabricmc.loom.task.service.JarManifestService
+import net.fabricmc.loom.task.ManifestModificationAction
+
+shadowJar {
+    archiveClassifier = null
+    configurations = [project.configurations.shadow]
+
+    relocate "blue.endless.jankson", "${project.maven_group}.shadowed.blue.endless.jankson"
+
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}"}
+    }
+
+    // Not really sure it matters, but with the loss of remapJar in 26.1, the Loom-added
+    // MANIFEST properties don't end up in the jar. This is a hacky way of getting them back,
+    // with some hardcoded values for areEnvironmentSourcesSplit and clientOnlyEntries
+    // that are correct for AppleSkin but not correct for all mods.
+    // Taken from Loom's NonRemappedJarTaskConfiguration.
+    final Provider<JarManifestService> manifestServiceProvider = JarManifestService.get(project)
+    doLast(new ManifestModificationAction(manifestServiceProvider, "official", provider{ false }, provider{ [] }))
+    usesService(manifestServiceProvider)
+}
+
+build {
+    dependsOn(tasks.shadowJar)
+}
+
+artifacts {
+    archives shadowJar
+ 	archives sourcesJar
+ 	archives apiJar
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			groupId = group
+			artifactId = project.archives_base_name
+
+			// add all the jars that should be included when publishing to maven
+			artifact(shadowJar) {
+				builtBy shadowJar
+			}
+			artifact(sourcesJar) {
+				builtBy sourcesJar
+			}
+			artifact(apiJar)
+		}
+	}
+
+	repositories {
+		maven {
+			url = project.findProperty("maven.url") ?: System.getenv("MAVEN_URL")
+			credentials {
+				username=project.findProperty("maven.user") ?: System.getenv("MAVEN_USER")
+				password=project.findProperty("maven.password") ?: System.getenv("MAVEN_PASSWORD")
+			}
+		}
+	}
+}

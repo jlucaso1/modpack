@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+}
+
+version = project.modVersion
+group = "yalter.mousetweaks"
+base.archivesName = "MouseTweaks-forge-mc${project.forgeMcVersion}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(project.modJavaVersion)
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['../src/main/java']
+            exclude 'yalter/mousetweaks/fabric'
+            exclude 'yalter/mousetweaks/ModMenuApiImpl.java'
+            exclude 'yalter/mousetweaks/neoforge'
+        }
+
+        resources {
+            srcDirs = ['../src/main/resources']
+            exclude 'fabric.mod.json'
+            exclude 'META-INF/neoforge.mods.toml'
+        }
+    }
+}
+
+minecraft {
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
+
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+
+            args "--mixin.config=mousetweaks.mixins.json"
+        }
+
+        register('client')
+        register('server')
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+processResources {
+    inputs.property "version", project.modVersion
+    filesMatching("META-INF/mods.toml") {
+        expand([
+                "version": project.modVersion,
+                "forgeLoaderVersion": project.forgeLoaderVersion,
+                "modCredits": project.modCredits,
+                "modDescription": project.modDescription,
+        ])
+    }
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${project.forgeMcVersion}-${project.forgeVersion}")
+    annotationProcessor "net.minecraftforge:eventbus-validator:${project.forgeEventBusValidatorVersion}"
+}
+
+jar {
+    manifest.attributes([
+            "MixinConfigs": "mousetweaks.mixins.json"
+    ])
+}
+
+tasks.register('srcJar', Jar) {
+    archiveClassifier.set("src")
+    from sourceSets.main.allJava
+}
+
+tasks.register('apiJar', Jar) {
+    archiveClassifier.set("api")
+    from(sourceSets.main.output) {
+        include 'yalter/mousetweaks/api/**'
+    }
+}
+
+tasks.named("assemble") {
+    dependsOn(srcJar)
+    dependsOn(apiJar)
+}

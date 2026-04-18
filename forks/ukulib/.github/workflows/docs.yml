@@ -1,0 +1,55 @@
+name: Deploy mkdocs
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "mkdocs.yml"
+      - "docs/**"
+
+  release:
+    types:
+      - published
+
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install mkdocs & plugins
+        run: |
+          pip install mkdocs-material
+          pip install -e docs/plugins/auto_maven_version
+
+      - name: Build docs
+        run: mkdocs build
+
+      - name: Setup pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy pages
+        id: deployment
+        uses: actions/deploy-pages@v4

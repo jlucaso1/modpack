@@ -1,0 +1,52 @@
+site_name: ukulib docs
+repo_url: https://github.com/uku3lig/ukulib
+repo_name: uku3lig/ukulib
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Config:
+      - Introduction: config/index.md
+      - Configuration screens: config/config-screen.md
+      - Widgets: config/widgets.md
+  - Utils: utils.md
+plugins:
+  - search
+  - auto_maven_version:
+      metadata_url: https://maven.uku3lig.net/releases/net/uku3lig/ukulib-common/maven-metadata.xml
+markdown_extensions:
+  - admonition
+  - attr_list
+  - footnotes
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - docs/assets/icons
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - content.code.annotate
+  language: en
+  logo: assets/icon.png
+  favicon: assets/icon.png
+  font:
+    text: IBM Plex Sans
+    code: Iosevka
+  palette:
+    # allow automatic color switch
+    - media: "(prefers-color-scheme)"
+    # light and dark mode settings
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple

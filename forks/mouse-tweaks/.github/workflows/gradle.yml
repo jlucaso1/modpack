@@ -1,0 +1,106 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - '*.txt'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '*.txt'
+  workflow_dispatch:
+
+jobs:
+  build-forge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: adopt
+          java-version: 25
+
+      - name: Build (Forge)
+        run: ./gradlew -p forge build
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: MouseTweaks-Forge
+          path: forge/build/libs/
+          if-no-files-found: error
+
+  build-neoforge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: adopt
+          java-version: 25
+
+      - name: Build (NeoForge)
+        run: ./gradlew -p neoforge build
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: MouseTweaks-NeoForge
+          path: neoforge/build/libs/
+          if-no-files-found: error
+
+  build-fabric:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: adopt
+          java-version: 25
+
+      - name: Build (Fabric)
+        run: ./gradlew -p fabric build
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: MouseTweaks-Fabric
+          path: fabric/build/libs/
+          if-no-files-found: error
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: adopt
+          java-version: 25
+
+      - name: Build testmod
+        run: ./gradlew -p fabric testmodClientClasses
+
+      # Fabric Loom 1.15 runs xvfb-run for us on a Linux CI.
+      - name: Run gametest
+        run: ./gradlew -p fabric runClientGametest
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v6
+        with:
+          name: screenshot
+          path: fabric/run/screenshots/
+          if-no-files-found: error

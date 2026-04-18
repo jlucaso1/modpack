@@ -1,0 +1,33 @@
+import org.gradle.api.Project
+
+object BuildConfig {
+    const val MINECRAFT_VERSION: String = "26.2-snapshot-3"
+    const val FABRIC_LOADER_VERSION: String = "0.19.2"
+    const val FABRIC_API_VERSION: String = "0.146.1+26.2"
+    const val NEOFORGE_VERSION: String = "26.1.0.1-beta"
+
+    const val TOML4J_VERSION: String = "0.7.2"
+
+    const val MOD_VERSION: String = "2.0.0"
+
+    const val MODRINTH_PROJECT_ID: String = "Y8uFrUil"
+
+    fun createVersionString(project: Project): String {
+        val builder = StringBuilder()
+
+        val isReleaseBuild = project.hasProperty("build.release")
+        val buildId = System.getenv("GITHUB_RUN_NUMBER")
+
+        builder.append(MOD_VERSION).append("+").append(MINECRAFT_VERSION)
+
+        if (!isReleaseBuild) {
+            if (buildId != null) {
+                builder.append("-build.${buildId}")
+            } else {
+                builder.append("-local")
+            }
+        }
+
+        return builder.toString()
+    }
+}
