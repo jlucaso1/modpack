@@ -1,0 +1,24 @@
+hash-format = "sha256"
+
+[[files]]
+file = "README.md"
+hash = "d668e16aac101663a329698ac57e505633ffdf6b14c03e1c70e30014df1a6cbc"
+
+[[files]]
+file = "config/.gitkeep"
+hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+[[files]]
+file = "mods/c2me-fabric.pw.toml"
+hash = "2c9c86759c5e882da51a25bd601e9c0d44696b5ea1bbac1ffa08bb413f918f56"
+metafile = true
+
+[[files]]
+file = "mods/fabric-api.pw.toml"
+hash = "78f9942dd0bf39aa546bdeb4ac8eeae2c4867068699a8cfec67cbfe321f002dc"
+metafile = true
+
+[[files]]
+file = "mods/zfastnoise.pw.toml"
+hash = "8cc5335f707d56f5a56fe1c6980e82834713621698039fe852f43080620b5ba9"
+metafile = true
