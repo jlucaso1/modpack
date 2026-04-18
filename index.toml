@@ -19,6 +19,11 @@ hash = "78f9942dd0bf39aa546bdeb4ac8eeae2c4867068699a8cfec67cbfe321f002dc"
 metafile = true
 
 [[files]]
+file = "mods/simple-voice-chat.pw.toml"
+hash = "df5808e67f8c7ff42c17cc12f07fc96a0154a766c4e9f3e320d2dcba41141bc5"
+metafile = true
+
+[[files]]
 file = "mods/zfastnoise.pw.toml"
 hash = "8cc5335f707d56f5a56fe1c6980e82834713621698039fe852f43080620b5ba9"
 metafile = true
