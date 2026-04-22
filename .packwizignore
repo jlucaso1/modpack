@@ -1,0 +1,10 @@
+.claude/
+.git/
+.gitignore
+.gitattributes
+.github/
+.vscode/
+.idea/
+forks/
+*.swp
+.DS_Store

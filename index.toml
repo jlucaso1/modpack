@@ -10,20 +10,20 @@ hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
 [[files]]
 file = "mods/c2me-fabric.pw.toml"
-hash = "2c9c86759c5e882da51a25bd601e9c0d44696b5ea1bbac1ffa08bb413f918f56"
+hash = "7d3256b8a9a82a7615bdf6bb16685ca5dda269a95420af508121cd8f586ce141"
 metafile = true
 
 [[files]]
 file = "mods/fabric-api.pw.toml"
-hash = "78f9942dd0bf39aa546bdeb4ac8eeae2c4867068699a8cfec67cbfe321f002dc"
+hash = "2106749bef27e8302e651a8a65fb670db210cd1808df56b77b3eed9a62bdd2a5"
 metafile = true
 
 [[files]]
 file = "mods/simple-voice-chat.pw.toml"
-hash = "df5808e67f8c7ff42c17cc12f07fc96a0154a766c4e9f3e320d2dcba41141bc5"
+hash = "8a78fe12ffe4b038fc9ed374b40cefb17a9e2c23b9763211f846e24a065f0d4a"
 metafile = true
 
 [[files]]
 file = "mods/zfastnoise.pw.toml"
-hash = "8cc5335f707d56f5a56fe1c6980e82834713621698039fe852f43080620b5ba9"
+hash = "9e32b09f631c7c21be7cba10b4b8029255ed615dc1247f9a24ba99523e1f54ce"
 metafile = true
